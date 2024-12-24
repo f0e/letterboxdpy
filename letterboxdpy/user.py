@@ -20,8 +20,7 @@ from letterboxdpy.pages import (
     user_network,
     user_profile,
     user_reviews,
-    user_tags,
-    user_watchlist
+    user_tags
 )
 
 
@@ -39,7 +38,6 @@ class User:
             self.profile = user_profile.UserProfile(username)
             self.reviews = user_reviews.UserReviews(username)
             self.tags = user_tags.UserTags(username)
-            self.watchlist = user_watchlist.UserWatchlist(username)
 
     def __init__(self, username: str) -> None:
         assert re.match("^[A-Za-z0-9_]*$", username), "Invalid username"
@@ -54,12 +52,10 @@ class User:
         self.bio = self.get_bio()
         self.location = self.get_location()
         self.website = self.get_website()
-        self.watchlist_length = self.get_watchlist_length()
         self.stats = self.get_stats()
         self.favorites = self.get_favorites()
         self.avatar = self.get_avatar()
         self.recent = {
-            'watchlist': self.get_watchlist_recent(),
             'diary': self.get_diary_recent()
         }
 
@@ -124,16 +120,12 @@ class User:
         return self.pages.profile.get_location()
     def get_website(self) -> str:
         return self.pages.profile.get_website()
-    def get_watchlist_length(self) -> int:
-        return self.pages.profile.get_watchlist_length()
     def get_stats(self) -> dict:
         return self.pages.profile.get_stats()
     def get_favorites(self) -> dict:
         return self.pages.profile.get_favorites()
     def get_avatar(self) -> str:
         return self.pages.profile.get_avatar()
-    def get_watchlist_recent(self) -> dict:
-        return self.pages.profile.get_watchlist_recent()
     def get_diary_recent(self) -> dict:
         return self.pages.profile.get_diary_recent()
     
@@ -142,13 +134,6 @@ class User:
     
     def get_user_tags(self) -> dict:
         return self.pages.tags.get_user_tags()
-    
-    def get_watchlist_count(self) -> int:
-        return self.pages.watchlist.get_count()
-    def get_watchlist_movies(self) -> dict:
-        return self.pages.watchlist.get_movies()
-    def get_watchlist(self, filters:dict=None) -> dict:
-        return self.pages.watchlist.get_watchlist(filters)
 
 if __name__ == "__main__":
     import argparse

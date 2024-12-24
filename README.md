@@ -47,7 +47,6 @@ print(user_instance)
   "bio": null,
   "location": null,
   "website": null,
-  "watchlist_length": 74,
   "stats": {
     "films": 594,
     "this_year": 74,
@@ -67,13 +66,6 @@ print(user_instance)
     "url": "https://a.ltrbxd.com/resized/avatar/upload/1/5/0/0/3/0/6/shard/avtr-0-1000-0-1000-crop.jpg"
   },
   "recent": {
-    "watchlist": {
-      "1042841": {
-        "id": "1042841",
-        "slug": "the-contestant-2023",
-        "name": "The Contestant"
-      },...
-    },
     "diary": {
       "months": {
         "9": {

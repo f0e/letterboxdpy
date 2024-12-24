@@ -66,8 +66,6 @@ methods = [
     user.User.get_followers,
     user.User.get_reviews,
     user.User.get_user_tags,
-    user.User.get_watchlist_movies,
-    user.User.get_watchlist,
 ]
 methods_str_length = len(str(len(methods)))
 

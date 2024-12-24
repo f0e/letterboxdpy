@@ -23,11 +23,9 @@ class UserProfile:
     def get_bio(self) -> str | None: return extract_bio(self.dom)
     def get_location(self) -> str | None: return extract_location(self.dom)
     def get_website(self) -> str | None: return extract_website(self.dom)
-    def get_watchlist_length(self) -> int | None: return extract_watchlist_length(self.dom)
     def get_stats(self) -> dict: return extract_stats(self.dom)
     def get_favorites(self) -> dict: return extract_favorites(self.dom)
     def get_avatar(self) -> str | None: return extract_avatar(self.dom)
-    def get_watchlist_recent(self) -> dict: return extract_watchlist_recent(self.dom)
     def get_diary_recent(self) -> dict: return extract_diary_recent(self.dom)
 
 
@@ -106,28 +104,6 @@ def extract_website(dom) -> str | None:
     except Exception as e:
         raise RuntimeError("Failed to extract website from DOM") from e
 
-def extract_watchlist_length(dom) -> int | None:
-    """Extracts the watchlist length from the DOM."""
-    try:
-        nav_links = dom.find_all("a", {"class": ["navlink"]})
-        for link in nav_links:
-            if "Watchlist" in link.text:
-                if "rel" in link.attrs:
-                    # 'User watchlist is not visible'
-                    return None  # feature: PrivateData(Exception)
-                else:
-                    # 'User watchlist is visible'
-                    widget = dom.find("section", {"class": ["watchlist-aside"]})
-                    return int(
-                        widget.find("a", {"class": ["all-link"]}).text.replace(',', '')
-                    ) if widget else 0
-        else:
-            # HQ members
-            # If no matching link found, return None
-            return None
-    except Exception as e:
-        raise RuntimeError("Failed to extract watchlist length from DOM") from e
-
 def extract_stats(dom) -> dict:
     """Extracts user statistics from the parsed DOM."""
     def extract_stat(stat_element) -> tuple:
@@ -178,38 +154,6 @@ def extract_avatar(dom) -> str | None:
         return None  # Avatar not found
     except Exception as e:
         raise RuntimeError("Failed to extract avatar from DOM") from e
-
-def extract_watchlist_recent(dom) -> dict:
-    """Extracts recent watchlist items from the DOM, with error handling."""
-    def extract_movie_info(item) -> dict:
-        """Extracts movie information from a watchlist item."""
-        film_id = item.get('data-film-id')
-        film_slug = item.get('data-film-slug')
-        film_name = item.img.get('alt', "Unknown") if item.img else "Unknown"
-
-        return {
-            'id': film_id,
-            'slug': film_slug,
-            'name': film_name
-        }
-
-    watchlist_recent = {}
-    section = dom.find("section", {"class": ["watchlist-aside"]})
-
-    if not section:
-        raise ValueError("Watchlist section not found in the DOM")
-
-    watchlist_items = section.find_all("li", {"class": ["film-poster"]})
-
-    if not watchlist_items:
-        raise ValueError("No watchlist items found in the DOM")
-
-    for item in watchlist_items:
-        movie = extract_movie_info(item)
-        if movie['id']:
-            watchlist_recent[movie['id']] = movie
-
-    return watchlist_recent
 
 def extract_diary_recent(dom) -> dict:
     """Extracts recent diary entries from the DOM."""
