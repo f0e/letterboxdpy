@@ -102,7 +102,7 @@ def extract_user_diary(
                 slug = actions["data-film-slug"] # !film col
                 release = actions["ddata-film-release-year"] # !released col
                 """
-                runtime = actions["data-film-run-time"]
+                runtime = actions.get("data-film-run-time")
                 runtime = int(runtime) if runtime else None
 
                 # create entry
