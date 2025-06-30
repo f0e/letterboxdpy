@@ -268,6 +268,7 @@ def extract_user_diary(
                 liked = bool(cols["like"].find("span", attrs={"class": "icon-liked"}))
                 # review column
                 reviewed = bool(cols["review"].a)
+                review_link = cols["review"].a["href"] if reviewed else None
                 # actions column
                 actions = cols["actions"]
                 """
@@ -294,6 +295,7 @@ def extract_user_diary(
                         "rating": rating,
                         "liked": liked,
                         "reviewed": reviewed,
+                        "review_link": review_link
                     },
                     "entry_link": entry_link,
                     "date": date,
