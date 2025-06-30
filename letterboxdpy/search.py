@@ -86,12 +86,11 @@ class Search:
 
     def get_page_results(self, dom) -> list:
       result_types = {
-        'film': [None, ["film-poster"]],
+        'film': ["search-result", "film-poster"], # Modified: Add "search-result" for the li, and keep "film-poster" for nested div
         'review': ["film-detail"],
         'list': ["list-set"],
         'story': [None, ['card-summary']],
         # Cast, Crew or Studios
-        # 'cast': ["search-result", "-contributor",],
         'actor': ["search-result", "-contributor", "-actor"],
         'director': ["search-result", "-contributor", "-director"],
         'studio': ["search-result", "-contributor", "-studio"],
@@ -114,24 +113,35 @@ class Search:
         item_type = None
 
         # parsing result type
-        for r_type in result_types:
-          if 'class' in item.attrs:
-            if result_types[r_type][0]:
-              if result_types[r_type][-1] in item.attrs['class']:
-                  item_type = r_type
-                  #:print(item.attrs['class'])
-                  break
-          else:
-            if not result_types[r_type][0]:
-              keys = result_types[r_type][1][-1]
-              if keys in item.find_next().attrs['class']:
+        for r_type, classes_to_check in result_types.items():
+          if classes_to_check[0] and classes_to_check[0] in item.attrs.get('class', []):
+            # Check if the primary class is present on the <li> itself
+            if len(classes_to_check) > 1:
+              # If there's a secondary class to check on a nested element
+              # For 'film', this would be 'film-poster'
+              if item.find(class_=classes_to_check[1]):
                 item_type = r_type
-                #:print(item.find_next().attrs['class'])
+                break
+            else:
+              item_type = r_type
+              break
+          elif not classes_to_check[0]: # For types that don't have a primary class on the <li>
+            # This path seems to be for cases where the identification is purely based on a nested element
+            # In your original code, this was `if keys in item.find_next().attrs['class']:`
+            # Let's adjust this to be more robust
+            if len(classes_to_check) > 1 and classes_to_check[1]:
+              # Check for the nested element class
+              # item.find_next() can be unreliable; safer to use find() with specific selector
+              if item.find(class_=classes_to_check[1][-1]): # Assuming last element is the class to check
+                item_type = r_type
                 break
 
-        # result content
-        result = self.parse_result(item, item_type)
-        data.append(result)
+        # If no specific type found, you might want a default or skip
+        if item_type: # Only process if a type was identified
+          result = self.parse_result(item, item_type)
+          data.append(result)
+        else:
+          print(f"Could not determine type for item: {item.prettify()[:100]}...") # Debugging
 
       return data
 
