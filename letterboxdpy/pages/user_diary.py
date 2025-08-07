@@ -148,7 +148,7 @@ def extract_user_diary(
                     "slug": slug,
                     "id":  id,
                     "release": release,
-                    # "runtime": runtime,
+                    "runtime": runtime,
                     "actions": {
                         "rewatched": rewatched,
                         "rating": rating,
