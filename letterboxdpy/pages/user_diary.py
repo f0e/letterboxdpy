@@ -85,11 +85,19 @@ def extract_user_diary(
                 else:
                     # Extract from monthdate if available
                     date = {"year": None, "month": None, "day": None}
+
+                entry_link = None
+
                 # film column (updated for new HTML structure)
                 if 'production' in cols:
                     # Look for the poster div with data-film attributes
                     production_col = cols['production']
                     poster = production_col.find('div', {'data-film-slug': True}) or production_col.div
+
+                    masthead = production_col.find('header', class_='inline-production-masthead')
+                    if masthead:
+                        entry_link_elem = masthead.find('h2', class_='name').find('a') if masthead.find('h2', class_='name') else None
+                        entry_link = entry_link_elem['href'] if entry_link_elem else None
                 elif 'film' in cols:  # fallback for old structure
                     poster = cols['film'].div
                 else:
@@ -129,7 +137,6 @@ def extract_user_diary(
                 liked = bool(cols["like"].find("span", attrs={"class": "icon-liked"}))
                 # review column
                 reviewed = bool(cols["review"].a)
-                review_link = cols["review"].a["href"] if reviewed else None
                 # actions column
                 actions = cols["actions"]
                 """
@@ -154,8 +161,8 @@ def extract_user_diary(
                         "rating": rating,
                         "liked": liked,
                         "reviewed": reviewed,
-                        "review_link": review_link
                     },
+                    "entry_link": entry_link,
                     "date": date,
                     "page": {
                         'url': url,
