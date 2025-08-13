@@ -12,6 +12,7 @@ from letterboxdpy.pages import (
     user_activity,
     user_diary,
     user_films,
+    user_film,
     user_likes,
     user_lists,
     user_network,
@@ -29,6 +30,7 @@ class User:
             self.activity = user_activity.UserActivity(username)
             self.diary = user_diary.UserDiary(username)
             self.films = user_films.UserFilms(username)
+            self.film = user_film.UserFilm(username)
             self.likes = user_likes.UserLikes(username)
             self.lists = user_lists.UserLists(username)
             self.network = user_network.UserNetwork(username)
@@ -110,9 +112,12 @@ class User:
     def get_films_not_rated(self) -> dict:
         return self.pages.films.get_films_not_rated()
 
+    def get_film(self, film_slug: str) -> dict:
+        return self.pages.film.get_film(film_slug)
+
     def get_genre_info(self) -> dict:
         return self.pages.films.get_genre_info()
-
+    
     def get_liked_films(self) -> dict:
         return self.pages.likes.get_liked_films()
 
