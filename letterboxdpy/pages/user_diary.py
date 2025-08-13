@@ -92,6 +92,8 @@ def extract_user_diary(
                 name = react_div.get("data-item-name", "Unknown") if react_div else "Unknown"
                 slug = react_div.get("data-item-slug") if react_div else None
                 id = react_div.get("data-film-id") if react_div else None
+                entry_link = react_div.get("data-target-link") if react_div else None
+
                 # released column (updated for new HTML structure)
                 if 'releaseyear' in cols:
                     release = cols["releaseyear"].text.strip()
@@ -135,6 +137,7 @@ def extract_user_diary(
                         "liked": liked,
                         "reviewed": reviewed,
                     },
+                    "entry_link": entry_link,
                     "date": date,
                     "page": {
                         'url': url,
